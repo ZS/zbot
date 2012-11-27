@@ -21,6 +21,9 @@ class JiraHandler
 		@domain = process.env.HUBOT_JIRA_DOMAIN
 		@auth = "Basic " + new Buffer(@username + ":" + @password).toString('base64')
 		
+	is_non_jira_link: (txt) ->
+		return txt.indexOf("http") >= 0 and txt.indexOf("#{@domain}.atlassian.net") < 0
+
 	getJSON: (url, query, callback) ->
 		@msg.http(url)
 			.header('Authorization', @auth)
@@ -33,6 +36,7 @@ class JiraHandler
 					@msg.send "got an error trying to call JIRA svc\nerror: #{error}\nresponse: #{body}"
 
 	getIssue: (id, msg_text) ->
+		return if is_non_jira_link(msg_text)
 		url = "https://#{@domain}.atlassian.net/rest/api/latest/issue/#{id.toUpperCase()}"
 		@getJSON url, null, (err, issue) =>
 			if err
@@ -41,7 +45,7 @@ class JiraHandler
 			unless issue.fields?
 				@msg.send "Couldn't find the JIRA issue #{id}"
 				return
-			@msg.send "#{id}: #{issue.fields.summary} (https://zsassociates.atlassian.net/browse/#{id}) (debug: #{msg_text})"
+			@msg.send "#{id}: #{issue.fields.summary} (https://zsassociates.atlassian.net/browse/#{id})"
 
 	getIssues: (jql) ->
 		url = "https://#{@domain}.atlassian.net/rest/api/latest/search"
