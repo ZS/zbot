@@ -41,7 +41,7 @@ class JiraHandler
 			unless issue.fields?
 				@msg.send "Couldn't find the JIRA issue #{id}"
 				return
-			@msg.send "#{id}: #{issue.fields.summary} (https://zsassociates.atlassian.net/browse/#{id}) (debug: #{msg_text.user} #{msg_text.text})"
+			@msg.send "#{id}: #{issue.fields.summary} (https://zsassociates.atlassian.net/browse/#{id}) (debug: #{msg_text})"
 
 	getIssues: (jql) ->
 		url = "https://#{@domain}.atlassian.net/rest/api/latest/search"
@@ -70,7 +70,7 @@ class JiraHandler
 module.exports = (robot) ->
 	robot.hear /\b([A-Za-z]{3,}-[\d]+)/i, (msg) ->
 		handler = new JiraHandler msg
-		handler.getIssue msg.match[1], msg.message
+		handler.getIssue msg.match[1], msg.message.text
 	
 	robot.respond /jira me(?: issues where)? (.+)$/i, (msg) ->
 		handler = new JiraHandler msg
