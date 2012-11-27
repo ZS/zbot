@@ -36,7 +36,7 @@ class JiraHandler
 					@msg.send "got an error trying to call JIRA svc\nerror: #{error}\nresponse: #{body}"
 
 	getIssue: (id, msg_text) ->
-		return if is_non_jira_link(msg_text)
+		return if @is_non_jira_link(msg_text)
 		url = "https://#{@domain}.atlassian.net/rest/api/latest/issue/#{id.toUpperCase()}"
 		@getJSON url, null, (err, issue) =>
 			if err
