@@ -70,7 +70,7 @@ class JiraHandler
 module.exports = (robot) ->
 	robot.hear /\b([A-Za-z]{3,}-[\d]+)/i, (msg) ->
 		handler = new JiraHandler msg
-		handler.getIssue msg.match[1], msg.match[0]
+		handler.getIssue msg.match[1], msg.message
 	
 	robot.respond /jira me(?: issues where)? (.+)$/i, (msg) ->
 		handler = new JiraHandler msg
